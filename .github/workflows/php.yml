@@ -29,13 +29,10 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
   deployment:
-
     name: Deploy project
-
+    environment: production
     needs: build
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy using SSH
         uses: appleboy/ssh-action@master
