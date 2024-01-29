@@ -34,15 +34,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps: 
-      name: get lastest code
-      - uses: actions/checkout@v3
-
-      name: Sync files 
-      - uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i --delete"
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: "/dist/, /node_modules/, /vendor/, .env.*"
+      - name: get lastest code
+        uses: actions/checkout@v3
+      - name: Sync files 
+        uses: easingthemes/ssh-deploy@main
+          with:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            ARGS: "-rlgoDzvc -i --delete"
+            REMOTE_HOST: ${{ secrets.HOST }}
+            REMOTE_USER: ${{ secrets.REMOTE_USER }}
+            TARGET: ${{ secrets.REMOTE_TARGET }}
+            EXCLUDE: "/dist/, /node_modules/, /vendor/, .env.*"
