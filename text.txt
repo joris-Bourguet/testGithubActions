@@ -1,1 +1,1 @@
-update passphrase
+update host
