@@ -32,7 +32,7 @@ jobs:
     name: Deploy project
     environment: production
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Deploy using SSH
         uses: appleboy/ssh-action@master
