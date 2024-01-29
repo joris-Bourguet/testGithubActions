@@ -41,8 +41,4 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            cd ~/www/dev
-            git pull origin main
-            git status
-            npm install --only=prod
+          script: echo "test"
