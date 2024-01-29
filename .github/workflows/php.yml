@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    name: Build project
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -28,6 +29,8 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
   deployment:
+    name: Deploy project
+    needs: build
     runs-on: ubuntu-latest
     environment: production
     steps:
