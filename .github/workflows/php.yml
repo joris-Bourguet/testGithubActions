@@ -1,4 +1,4 @@
-name: PHP Composer
+name: BUILD AND DEPLOY Laravel application
 
 on:
   push:
@@ -14,6 +14,10 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 21
+        cache: 'npm'
     - uses: actions/checkout@v3
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -21,7 +25,6 @@ jobs:
       id: composer-cache
       uses: actions/cache@v3
       with:
-        node-version: 21
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
@@ -41,6 +44,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/www/dev
             git pull origin main
