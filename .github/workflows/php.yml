@@ -29,19 +29,19 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
   deployment:
-    name: Deploy to Server
+    name: Deploy project
+    environment: production
     needs: build
     runs-on: ubuntu-latest
-    environment: production
-    steps: 
-      - name: get lastest code
-        uses: actions/checkout@v3
-      - name: Sync files 
-        uses: easingthemes/ssh-deploy@main
+    steps:
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i --delete"
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: "/dist/, /node_modules/, /vendor/, .env.*"
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/www/dev
+            git pull origin main
+            git status
+            npm install --only=prod
