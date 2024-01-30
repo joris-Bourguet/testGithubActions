@@ -34,8 +34,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: 🚚 Checkout Repository
+        uses: actions/checkout@v3
+
       - name: Deploy using SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.REMOTE_USER }}
@@ -46,3 +49,4 @@ jobs:
             git pull origin main
             git status
             npm install --only=prod
+          debug: true
