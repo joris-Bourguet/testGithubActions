@@ -35,11 +35,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy using SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
           script: |
             cd ~/www/dev
             git pull origin main
