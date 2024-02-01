@@ -41,7 +41,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: "jorisbourguet.fr"
-          username: "joris-bourguet"
+          username: "testGithubActions"
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
