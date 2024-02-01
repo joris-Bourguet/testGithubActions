@@ -40,10 +40,10 @@ jobs:
       - name: Deploy using SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.REMOTE_USER }}
+          host: "jorisbourguet.fr"
+          username: "joris-bourguet"
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
+          port: 22
           script: |
             cd ~/www/dev
             git pull origin main
