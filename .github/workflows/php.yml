@@ -41,10 +41,11 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: "jorisbourguet.fr"
-          username: "testGithubActions"
+          username: "joris-bourguet"
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            whoami
             cd ~/www/dev
             git pull origin main
             git status
