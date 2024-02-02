@@ -14,7 +14,8 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: 🚚 Checkout Repository
+      uses: actions/checkout@v3
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
     - name: Cache Composer packages
@@ -26,7 +27,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: | 
+        composer install --optimize-autoloader --no-dev
+        php artisan optimize
+
+    - name: 🔨 Build Npm
+      run: |
+        npm install
+        npm run build
 
   deployment:
     name: Deploy project
@@ -37,17 +45,28 @@ jobs:
       - name: 🚚 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy using SSH
-        uses: appleboy/ssh-action@v1.0.0
+      # - name: Deploy using SSH
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.REMOTE_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     port: ${{ secrets.PORT }}
+      #     script: |
+      #       cd ~/www/dev
+      #       git pull origin main
+      #       git status
+      #       npm install --only=prod
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: "jorisbourguet.fr"
-          username: "joris-bourguet"
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            whoami
-            cd ~/www/dev
-            git pull origin main
-            git status
-            npm install --only=prod
-          debug: true
+          server: ftp.jorisbourguet.fr
+          username: root@jorisbourguet.fr
+          local-dir: C:/laragon/www/testGithubActions/
+          server-dir: ~/www/dev/
+          password: ${{ secrets.FTP_PASSWORD }}
+          exclude: |
+              **/.git*
+              **/.git*/**
+              .env
