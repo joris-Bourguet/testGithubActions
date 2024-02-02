@@ -2,9 +2,9 @@ name: BUILD AND DEPLOY Laravel application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -14,60 +14,65 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
     steps:
-    
-    - name: 🚚 Checkout Repository
-      uses: actions/checkout@v3
+      - name: 🚚 Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-    - name: Install dependencies
-      run: | 
-        composer install --optimize-autoloader --no-dev
-        php artisan optimize
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      
+      - name: Cache Npm packages
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
-    - name: Cache Npm packages
-      uses: actions/cache@v3
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-                  ${{ runner.os }}-npm-
-
-    - name: 🔨 Build Npm
-      run: |
-        npm install
-        npm run build
+      - name: 🔨 Build Npm
+        run: |
+          npm install
+          npm run build
 
   deployment:
     name: Deploy project
     environment: production
     needs: build
+    if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Checkout Repository
         uses: actions/checkout@v3
 
-      # - name: Deploy using SSH
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.REMOTE_USER }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     port: ${{ secrets.PORT }}
-      #     script: |
-      #       cd ~/www/dev
-      #       git pull origin main
-      #       git status
-      #       npm install --only=prod
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      
+      - name: Install dependencies
+        run: | 
+          composer install --optimize-autoloader --no-dev
+          php artisan optimize
+
+      - name: Cache Npm packages
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -77,6 +82,6 @@ jobs:
           server-dir: ~/www/dev/
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: |
-              **/.git*
-              **/.git*/**
-              .env
+            **/.git*
+            **/.git*/**
+            .env
