@@ -63,7 +63,6 @@ jobs:
         with:
           server: ftp.jorisbourguet.fr
           username: root@jorisbourguet.fr
-          local-dir: C:/laragon/www/testGithubActions/
           server-dir: ~/www/dev/
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: |
