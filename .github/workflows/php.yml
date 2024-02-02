@@ -14,10 +14,13 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
     steps:
+    
     - name: 🚚 Checkout Repository
       uses: actions/checkout@v3
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
@@ -30,6 +33,14 @@ jobs:
       run: | 
         composer install --optimize-autoloader --no-dev
         php artisan optimize
+
+    - name: Cache Npm packages
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+                  ${{ runner.os }}-npm-
 
     - name: 🔨 Build Npm
       run: |
