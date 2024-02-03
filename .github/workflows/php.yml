@@ -58,7 +58,7 @@ jobs:
           server: ftp.jorisbourguet.fr
           username: root@jorisbourguet.fr
           server-dir: ~/www/dev/
-          password: ${{ secrets.FTP_PASSWORD }}
+          password: ${{ secrets.FTP_PASSTEMP }}
           exclude: |
             **/.git*
             **/.git*/**
